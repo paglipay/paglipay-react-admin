@@ -1,85 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { render } from 'react-dom';
-import DTable from './components/DTable';
-import { Container, Row, Col, Pagination, Dropdown, DropdownButton, InputGroup, FormControl } from 'react-bootstrap'
 
-import logo from './logo.svg';
-import './App.css';
-import axios from 'axios'
+import { Container, Row, Col } from 'react-bootstrap'
+import DFormik from "./components/DFormik"
+// import './App.css';
+
+import Panel from "./components/Panel";
 
 function App() {
 
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [data, setData] = useState(
+  const [panelData, setPanelData] = useState([
     {
-      "header": [
-        // "device_id", "object_id",  "rancid_type", "description", "ip_address", "spanning-tree"], "_list": [
-        "ID", "building", "Serial Number", "SN"
-      ],
-      "_list": []
-    })
+      _list: [],
+      url: "http://192.168.2.201:3001/employees",
+      header: [
+        "first_name",
+        "last_name",
+        "email"
+      ]
+    },
+    {
+      _list: [],
+      url: "http://localhost:3001/audit?parse_for_sn.building=luskin",
+      header: [
+        "device_id",
+        // "parse_for_sn"
+        // "ID",
+        // "parse_for_sn.building",
+        // "RANCID-CONTENT-TYPE",
+        // "NAME",
+        // "SysContact",
+        // "SysLocation",
+        // "SysModelName",
+        // "Serial Number", "Processor ID",
+        // "DESCR",
+        // "PID",
+        // "VID",
+        // "SN"
+      ]
+    },
+    {
+      _list: [],
+      url: "http://192.168.2.201:3001/vlans",
+      header: [
+        "device_id",
+        "object_id",
+        "rancid_type",
+        "description",
+        "ip_address",
+        "spanning-tree"
+      ]
+    }
 
-  useEffect(() => {
-    loadData()
-
-  }, [])
-  useEffect(() => {
-    console.log('search: ', search)
-    loadData()
-  }, [page, search])
-  const items = [];
-  for (let number = 1; number <= 10; number++) {
-    items.push(
-      <Pagination.Item key={number} value={number} onClick={e => setPage(e.target.text)} active={number === page}>
-        {number}
-      </Pagination.Item>,
-    );
-  }
-
-
-  const loadData = () =>
-    axios.get(
-      // "http://192.168.2.201:3001/vlans", 
-      "http://localhost:3001/audit?device_id=br00f2n.luskin.ucla.net",
-      // {
-      //   params: {
-      //     _page: page,
-      //     _limit: 1000,
-      //     q: search
-      //   }
-      // }
-    )
-      .then(res => {
-        console.log(res.data)
-        setData({
-          ...data,
-          // "_list": res.data 
-          "_list": res.data[0].parse_for_sn
-        })
-      })
-      .catch(err => console.log(err));
+  ])
 
   return (
     <Container fluid>
-      <InputGroup className="mb-3">
-        <FormControl aria-label="Text input with dropdown button" name="search" value={search} onChange={e => setSearch(e.target.value)} />
+      <Row>
+        <Col>
+          <DFormik />
+        </Col>
+      </Row>
+      <Row>
+        {panelData.map(e => {
+          return (<Col>
+            <Panel pdata={e} />
+          </Col>)
+        }
+        )}
+      </Row>
 
-        <DropdownButton
-          variant="outline-secondary"
-          title="Dropdown"
-          id="input-group-dropdown-2"
-          align="end"
-        >
-          <Dropdown.Item href="#">Action</Dropdown.Item>
-          <Dropdown.Item href="#">Another action</Dropdown.Item>
-          <Dropdown.Item href="#">Something else here</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item href="#">Separated link</Dropdown.Item>
-        </DropdownButton>
-      </InputGroup>
-      <Pagination>{items}</Pagination>
-      <DTable data={data} />
     </Container>
   );
 }

@@ -18,18 +18,22 @@ function DTable({ data }) {
                 </tr>
             </thead>
             <tbody>
-                {data['_list'].filter(e => Object.keys(filterRow).map(fr => e[fr]===null || e[fr] === undefined ? (filterRow[fr]===""? true:false) : e[fr].toLowerCase().includes(filterRow[fr].toLowerCase())).every(v => v === true)).map((e, i) => {
+                {data['_list'].filter(e => Object.keys(filterRow).map(fr => e[fr] === null || e[fr] === undefined ? (filterRow[fr] === "" ? true : false) : e[fr].toLowerCase().includes(filterRow[fr].toLowerCase())).every(v => v === true)).map((e, i) => {
                     return (<tr key={i}>
                         <td>
-                            <Button size="sm">Edit</Button>
+                            {/* <Button size="sm">Edit</Button> */}
                         </td>
                         {data['header'].map((h, ic) => {
                             return (<td key={`${i}-${ic}`}>
-                                {i === editRow ? <Form.Control type="text" placeholder="Enter email" /> : <pre>{e[h] && e[h]}</pre>}
+                                {i === editRow ? <Form.Control type="text" placeholder="Enter email" /> : <pre>{
+                                e[h] && e[h]
+                                }</pre>}
                             </td>)
                         })}
                     </tr>)
-                })}
+                }
+                )
+                }
             </tbody>
         </Table>
     )
